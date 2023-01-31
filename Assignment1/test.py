@@ -1,82 +1,35 @@
 import numpy as np
 
+from utils import *
 from neural_network import NeuralNetwork
-from utils import sigmoid, softmax, cross_entropy_loss, add_bias_dimension
-
-# Only for testing
-from keras.datasets import mnist
+from enums import Activation, Cost
+from layer import *
 
 
+X = np.array([[1, 10], [16, 1], [50, 5]])
+y = np.array([[0, 1, 0], [0, 0, 1]])
 
 
-test_data_X = np.array([[1, 1], [2, 1]])
-test_data_y = np.array([1, 2])
+nn = NeuralNetwork(cost_function=Cost.CROSS_ENTROPY_LOSS)
 
-test_data_X2 = np.array([
-    [1, 2, 6, 4], 
-    [2, 3, 1, 7], 
-    [3, 5, 2, 3], 
-    [1, 8, 9, 6]
-])
-
-test_data_y2 = np.array([0, 1, 1, 0])
-
-w1_test = np.array([
-    [1.0, 0.5, 1.0],
-    [0.5, 1.0, 0.5], 
-    [1.0, 1.0, 1.0]
-])
-
-w2_test = np.array([
-    [1.0],
-    [0.5],
-    [1.0], 
-    [1.0]
-])
-
-def test_shapes(nn):
-    hidden_layer = nn.layers[0]
-    output_layer = nn.layers[1]
-    
-    # Testing for correct shapes of weights and biases
-    assert hidden_layer.weights.shape == (3, 3)
-    assert output_layer.weights.shape == (4, 1)
+nn.add_layer(DenseLayer(prev_layer_size=3, layer_size=4))
+nn.add_layer(ActivationLayer(Activation.SIGMOID))
+nn.add_layer(DenseLayer(prev_layer_size=4, layer_size=4))
+nn.add_layer(ActivationLayer(Activation.SIGMOID))
+nn.add_layer(DenseLayer(prev_layer_size=4, layer_size=2))
+nn.add_layer(ActivationLayer(Activation.SIGMOID))
+nn.add_layer(DenseLayer(prev_layer_size=2, layer_size=3))
+nn.add_layer(ActivationLayer(Activation.SIGMOID))
+nn.add_layer(ActivationLayer(Activation.SOFTMAX))
 
 
-# Testing for correct output from forward pass
-def test_forward_pass(nn, w1_test, w2_test, test_data_X):
-    nn.layers[0].set_weights(w1_test)
-    nn.layers[1].set_weights(w2_test)
-    output = nn.forward_pass(test_data_X, test_data_y)
+# Forward pass - output.shape is [batch size, num_classes]
+output = nn.forward_pass(X)
 
-    # Test outside model
-    test_data_X = add_bias_dimension(test_data_X)
-    o1 = sigmoid(np.transpose(w1_test) @ test_data_X )
+# Loss
+loss = cross_entropy_loss(y, output)
+print("Cross Entropy Loss: ", loss)
 
-    o1 = add_bias_dimension(o1)
-    output_true = sigmoid(np.transpose(w2_test) @ o1)    
+# Backward pass
+nn.backward_pass(output, y)
 
-
-    assert output.all() == output_true.all()
-    assert np.isclose([output[0, 0], output[0, 1]], [0.9674060661, 0.9647823295], rtol=1e-6)[0]
-    assert np.isclose([output[0, 0], output[0, 1]], [0.9674060661, 0.9647823295], rtol=1e-6)[1]
-
-    print(output)
-
-
-def network_test_without_softmax():
-    nn = NeuralNetwork(layers_array=np.array([2, 3, 1]), softmax=False)
-    test_shapes(nn)
-    test_forward_pass(nn, w1_test, w2_test, test_data_X)
-
-def network_test_with_softmax():
-    nn2 = NeuralNetwork(layers_array=np.array([test_data_X2.shape[0], 6, 4, 3]), softmax=True)
-    o = nn2.forward_pass(test_data_X2, test_data_y2)
-    print(o)
-
-if __name__ == "__main__":
-    network_test_without_softmax()
-    network_test_with_softmax()
-
-
-   

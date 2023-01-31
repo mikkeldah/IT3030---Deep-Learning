@@ -4,13 +4,12 @@ def sigmoid(z: np.ndarray) -> np.ndarray:
     return 1 / (1 + np.exp(-z))
 
 def softmax(output: np.ndarray) -> np.ndarray:
-    return np.exp(output) / np.exp(output).sum()
+    print(np.exp(output))
+    print(sum(np.exp(output)))
+    return np.exp(output) / np.exp(output).sum(axis=0)
 
 def cross_entropy_loss(targets: np.ndarray, outputs: np.ndarray) -> float:
-
-    loss_vector = -(targets * np.log(outputs) + (1 - targets) * np.log(1 - outputs))
-    cross_entropy_loss = (1 / targets.shape[0]) * np.sum(loss_vector)
-
+    cross_entropy_loss = np.mean(-np.sum(targets * np.log(outputs), axis=1))
     return cross_entropy_loss
 
 def add_bias_dimension(x: np.array):
@@ -19,4 +18,11 @@ def add_bias_dimension(x: np.array):
 
 def remove_bias_dimension(x: np.array):
     return x[:-1]
+
+def one_hot_encode(y: np.ndarray, n_classes: int):
+    y_encoded = np.zeros((y.shape[0], n_classes))
+    y_encoded[np.arange(y.shape[0]), y.flatten()] = 1
+
+    return y_encoded
+
 
