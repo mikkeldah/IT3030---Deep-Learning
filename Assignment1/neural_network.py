@@ -31,12 +31,10 @@ class NeuralNetwork:
 
     def backward_pass(self, outputs, targets):
 
-        loss = cross_entropy_loss(targets, outputs)
+        cost_grad = cross_entropy_loss_grad(targets, outputs)
+        print("J_cost_output: ", cost_grad)
 
-        J_cost_output = -np.sum(targets / outputs, axis=1)
-        print("J_cost_output: ", J_cost_output * np.array([[1, 1], [1, 1]]))
-
-        J_acc = J_cost_output
+        J_acc = cost_grad
 
         for layer in reversed(self.layers):
             J_acc = layer.backward(J_acc) 

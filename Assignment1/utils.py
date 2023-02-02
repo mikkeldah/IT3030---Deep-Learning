@@ -12,6 +12,10 @@ def cross_entropy_loss(targets: np.ndarray, outputs: np.ndarray) -> float:
     cross_entropy_loss = np.mean(-np.sum(targets * np.log(outputs), axis=1))
     return cross_entropy_loss
 
+def cross_entropy_loss_grad(targets: np.ndarray, outputs: np.ndarray) -> float:
+    cross_entropy_loss_grad = np.mean(-np.sum(targets / outputs, axis=1))
+    return cross_entropy_loss_grad
+
 def add_bias_dimension(x: np.array):
     biases = np.ones((1, x.shape[1]))
     return np.append(x, biases, axis=0)
