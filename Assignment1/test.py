@@ -10,14 +10,16 @@ X = np.array([[1, 2], [3, 4]])
 y = np.array([[0, 1], [1, 0]])
 
 
-nn = NeuralNetwork(cost_function=Cost.CROSS_ENTROPY_LOSS)
+nn = NeuralNetwork(cost_function=Cost.CROSS_ENTROPY_LOSS, learning_rate=1.0)
 
-nn.add_layer(DenseLayer(prev_layer_size=2, layer_size=2))
+nn.add_layer(DenseLayer(prev_layer_size=2, layer_size=3))
 nn.add_layer(ActivationLayer(Activation.SIGMOID))
-nn.add_layer(DenseLayer(prev_layer_size=2, layer_size=2))
+nn.add_layer(DenseLayer(prev_layer_size=3, layer_size=2))
 nn.add_layer(ActivationLayer(Activation.SIGMOID))
 nn.add_layer(ActivationLayer(Activation.SOFTMAX))
 
+
+# For each mini-batch repeat this process:
 
 # Forward pass - output.shape is [batch size, num_classes]
 output = nn.forward_pass(X)
