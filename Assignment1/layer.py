@@ -13,7 +13,7 @@ class Layer():
 
 class DenseLayer(Layer):
     def __init__(self, prev_layer_size: int, layer_size: int, activation: Activation) -> None:
-        self.weights = np.random.uniform(low=-0.1, high=0.1, size=(prev_layer_size, layer_size))
+        self.weights = np.random.uniform(low=-0.3, high=0.3, size=(prev_layer_size, layer_size))
         self.biases = np.ones((layer_size, 1))
 
 
@@ -30,7 +30,7 @@ class DenseLayer(Layer):
         # Sigmoid Jacobian
         J_z_sum = np.diagflat(self.activations * (1 - self.activations))
 
-        # Jacobian form Z to Weights
+        # Jacobian from Z to Weights
         J_z_w = np.outer(self.inputs.T, J_z_sum.diagonal())
 
         # Compute dL/dw and dL/db
@@ -42,6 +42,8 @@ class DenseLayer(Layer):
 
         # # Compute dL/dY
         J_L_y = J_L_z @ J_z_y
+
+        print("dw: ", lr * J_L_w)
 
         # Updating weights and biases
         self.weights = self.weights - lr * J_L_w

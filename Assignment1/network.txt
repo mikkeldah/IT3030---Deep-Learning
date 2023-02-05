@@ -1,0 +1,10 @@
+DEFAULTS
+cross_entropy
+0.1
+0.0001
+l2
+LAYERS
+dense in:784 out:100 
+dense in:100 out:20 
+dense in:20 out:4
+softmax
