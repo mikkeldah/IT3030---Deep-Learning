@@ -8,10 +8,9 @@ from enums import *
 
 class NeuralNetwork:
 
-    def __init__(self, cost_function: Cost, learning_rate: float):
+    def __init__(self, cost_function: Cost):
         self.layers = []
         self.cost_function = cost_function
-        self.learning_rate = learning_rate
 
     def add_layer(self, layer: Layer) -> None: 
         self.layers.append(layer)
@@ -30,16 +29,15 @@ class NeuralNetwork:
 
         return np.transpose(x)
 
-    def backward_pass(self, outputs, targets):
+    def backward_pass(self, outputs, targets, lr):
 
         cost_grad = cross_entropy_loss_grad(targets, outputs)
-        print("J_cost_output: ", cost_grad)
 
         J_acc = cost_grad
 
         for layer in reversed(self.layers):
-            J_acc = layer.backward(J_acc, self.learning_rate) 
-            
+            J_acc = layer.backward(J_acc, lr) 
+        
             
         
 

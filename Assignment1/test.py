@@ -1,35 +1,73 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from utils import *
 from neural_network import NeuralNetwork
 from enums import Activation, Cost
 from layer import *
+from doodler import *
 
 
-X = np.array([[1, 2], [3, 4]])
-y = np.array([[0, 1], [1, 0]])
+
+image_size = 30
+X_dood = gen_standard_cases(count=1000, rows=image_size, cols=image_size, show=False, cent=True, types=['ball', 'box', 'bar', 'triangle'])
+features = X_dood[0]
+targets = X_dood[1]
+labels = X_dood[2]
+
+X_train, y_train, X_test, y_test = train_test_split(features, targets)
+
+print(X_train.shape)
+print(y_train.shape)
+print(X_test.shape)
+print(y_test.shape)
 
 
-nn = NeuralNetwork(cost_function=Cost.CROSS_ENTROPY_LOSS, learning_rate=1.0)
-
-nn.add_layer(DenseLayer(prev_layer_size=2, layer_size=3))
-nn.add_layer(ActivationLayer(Activation.SIGMOID))
-nn.add_layer(DenseLayer(prev_layer_size=3, layer_size=2))
-nn.add_layer(ActivationLayer(Activation.SIGMOID))
-nn.add_layer(ActivationLayer(Activation.SOFTMAX))
+nn = NeuralNetwork(cost_function=Cost.CROSS_ENTROPY_LOSS)
 
 
-# For each mini-batch repeat this process:
 
-# Forward pass - output.shape is [batch size, num_classes]
-output = nn.forward_pass(X)
 
-print("Output Forward Pass: ", output)
+nn.add_layer(DenseLayer(prev_layer_size=image_size*image_size, layer_size=500, activation=Activation.SIGMOID))
+nn.add_layer(DenseLayer(prev_layer_size=500, layer_size=4, activation=Activation.SIGMOID))
+nn.add_layer(SoftmaxLayer())
 
-# Loss
-loss = cross_entropy_loss(y, output)
-print("Cross Entropy Loss: ", loss)
 
-# Backward pass
-nn.backward_pass(output, y)
+def train():
 
+    lr = 0.1
+
+    training_scores = []
+    losses = []
+
+    # For each training example repeat this process:
+    for i in range(features.shape[0]):
+
+        print("Training Case: ", i+1)
+
+        # Preprosess data
+        x = features[i].flatten().reshape(-1, 1)
+        y = targets[i].reshape(1,-1)
+
+        # print(y)
+        # plt.imshow(features[i], cmap="gray")
+        # plt.show()
+
+        # Forward pass - output.shape is [batch size, num_classes]
+        output = nn.forward_pass(x)
+        print("Output Forward Pass: ", output)
+
+        # Backward pass
+        nn.backward_pass(output, y, lr=lr)
+
+        # Validation and Loss
+        loss = cross_entropy_loss(y, output)
+        print("Loss: ", loss)
+
+        losses.append(loss)
+        print("\n")
+
+    plt.plot(range(len(losses)), losses)
+    plt.show()
+
+train()
