@@ -14,12 +14,13 @@ class Layer():
 class DenseLayer(Layer):
     def __init__(self, prev_layer_size: int, layer_size: int, activation: Activation) -> None:
         self.weights = np.random.uniform(low=-0.1, high=0.1, size=(prev_layer_size, layer_size))
-        #self.biases = np.ones((layer_size, 1))
+        self.biases = np.ones((layer_size, 1))
 
 
     def forward(self, x: np.ndarray) -> np.ndarray:
         self.inputs = x
-        self.sum = self.weights.T @ x
+
+        self.sum = self.weights.T @ x + self.biases
 
         self.activations = sigmoid(self.sum)
 
@@ -32,8 +33,9 @@ class DenseLayer(Layer):
         # Jacobian form Z to Weights
         J_z_w = np.outer(self.inputs.T, J_z_sum.diagonal())
 
-        # Compute dL/dw
+        # Compute dL/dw and dL/db
         J_L_w = J_L_z * J_z_w
+        J_L_b = J_L_z * J_z_sum.diagonal()
 
         # # Jacobian from Z to previous layer
         J_z_y = J_z_sum @ self.weights.T
@@ -43,13 +45,10 @@ class DenseLayer(Layer):
 
         # Updating weights and biases
         self.weights = self.weights - lr * J_L_w
-        #self.biases = self.biases - lr * self.biases
+        self.biases = self.biases - lr * J_L_b.reshape(-1, 1)
 
         return J_L_y
     
-
-
-
 
 
 class SoftmaxLayer(Layer):

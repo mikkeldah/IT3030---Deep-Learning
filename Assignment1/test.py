@@ -10,7 +10,7 @@ from doodler import *
 
 
 image_size = 30
-X_dood = gen_standard_cases(count=1000, rows=image_size, cols=image_size, show=False, cent=True, types=['ball', 'box', 'bar', 'triangle'])
+X_dood = gen_standard_cases(count=50000, rows=image_size, cols=image_size, show=False, cent=True, types=['ball', 'box', 'bar', 'triangle'])
 features = X_dood[0]
 targets = X_dood[1]
 labels = X_dood[2]
@@ -26,10 +26,8 @@ print(y_test.shape)
 nn = NeuralNetwork(cost_function=Cost.CROSS_ENTROPY_LOSS)
 
 
-
-
-nn.add_layer(DenseLayer(prev_layer_size=image_size*image_size, layer_size=500, activation=Activation.SIGMOID))
-nn.add_layer(DenseLayer(prev_layer_size=500, layer_size=4, activation=Activation.SIGMOID))
+nn.add_layer(DenseLayer(prev_layer_size=image_size*image_size, layer_size=20, activation=Activation.SIGMOID))
+nn.add_layer(DenseLayer(prev_layer_size=20, layer_size=4, activation=Activation.SIGMOID))
 nn.add_layer(SoftmaxLayer())
 
 
