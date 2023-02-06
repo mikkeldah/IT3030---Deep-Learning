@@ -26,7 +26,7 @@ class DenseLayer(Layer):
 
         return self.activations
 
-    def backward(self, J_L_z, lr):
+    def backward(self, J_L_z, lr, reglam, wrtype):
 
         # Sigmoid Jacobian
         J_z_sum = np.diagflat(self.activations * (1 - self.activations))
@@ -36,17 +36,25 @@ class DenseLayer(Layer):
 
         # Compute dL/dw and dL/db
         J_L_w = J_L_z * J_z_w
-        J_L_b = J_L_z * J_z_sum.diagonal()
+        J_L_b = (J_L_z * J_z_sum.diagonal()).reshape(-1, 1)
 
-        # # Jacobian from Z to previous layer
+        # Regularization
+        if wrtype == 'l2':
+            J_L_w = J_L_w + reglam * self.weights
+            J_L_b = J_L_b + reglam * self.biases
+        elif wrtype == 'l1':
+            J_L_w = J_L_w + reglam * np.sign(self.weights)
+            J_L_b = J_L_b + reglam * np.sign(self.biases)
+
+        # Jacobian from this to previous layer
         J_z_y = J_z_sum @ self.weights.T
 
-        # # Compute dL/dY
+        # Compute dL/dY
         J_L_y = J_L_z @ J_z_y
 
         # Updating weights and biases
         self.weights = self.weights - lr * J_L_w
-        self.biases = self.biases - lr * J_L_b.reshape(-1, 1)
+        self.biases = self.biases - lr * J_L_b
 
         return J_L_y
     
@@ -61,7 +69,7 @@ class SoftmaxLayer(Layer):
         return self.activations
 
     
-    def backward(self, J_acc, lr):
+    def backward(self, J_acc, lr, reglam, wrtype):
 
         s = self.activations
         J_softmax_z = np.diagflat(s) - np.outer(s, s)

@@ -7,10 +7,10 @@ def parse_file(filepath):
     with open(filepath, 'r') as f:
         data = f.read()
 
-    cost = data.split("\n")[1]
-    lr = data.split("\n")[2]
-    reglam = data.split("\n")[3]
-    wrt = data.split("\n")[4]
+    cost = str(data.split("\n")[1])
+    lr = float(data.split("\n")[2])
+    reglam = float(data.split("\n")[3])
+    wrtype = str(data.split("\n")[4])
 
     layers = []
 
@@ -24,10 +24,8 @@ def parse_file(filepath):
         elif name == "softmax":
             layers.append(SoftmaxLayer())
 
-    nn = NeuralNetwork(cost_function=cost, lr=lr)
+    nn = NeuralNetwork(cost_function=cost, lr=lr, reglam=reglam, wrtype=wrtype)
     nn.set_layers(layers=layers)
 
     return nn
-
-nn = parse_file('Assignment1/network.txt')
 
