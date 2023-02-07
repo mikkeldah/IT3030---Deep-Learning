@@ -4,6 +4,9 @@ from doodler import *
 def sigmoid(z: np.ndarray) -> np.ndarray:
     return 1 / (1 + np.exp(-z))
 
+def relu(z: np.ndarray) -> np.ndarray:
+    return np.maximum(0, z)
+
 def softmax(output: np.ndarray) -> np.ndarray:
     return np.exp(output) / np.exp(output).sum(axis=0)
 
@@ -30,6 +33,7 @@ def train_test_split(features, targets, split=0.2):
     return X_train, y_train, X_test, y_test
 
 
+# types=['ball', 'box', 'bar', 'triangle']
 def get_doodler_data(count):
     image_size = 28
     X_dood = gen_standard_cases(count=count, rows=image_size, cols=image_size, show=False, cent=True, types=['ball', 'box', 'bar', 'triangle'])
@@ -44,6 +48,7 @@ def one_hot_encode(y: np.ndarray, n_classes: int):
     y_encoded[np.arange(y.shape[0]), y.flatten()] = 1
 
     return y_encoded
+
 
 
 

@@ -15,6 +15,7 @@ class DenseLayer(Layer):
     def __init__(self, prev_layer_size: int, layer_size: int, activation: Activation) -> None:
         self.weights = np.random.uniform(low=-0.3, high=0.3, size=(prev_layer_size, layer_size))
         self.biases = np.ones((layer_size, 1))
+        self.activation_f = activation
 
 
     def forward(self, x: np.ndarray) -> np.ndarray:
@@ -22,15 +23,24 @@ class DenseLayer(Layer):
 
         self.sum = self.weights.T @ x + self.biases
 
-        self.activations = sigmoid(self.sum)
+        if self.activation_f == Activation.SIGMOID:
+            self.activations = sigmoid(self.sum)
+
+        elif self.activation_f == Activation.RELU:
+            self.activations = relu(self.sum)
 
         return self.activations
 
     def backward(self, J_L_z, lr, reglam, wrtype):
 
-        # Sigmoid Jacobian
-        J_z_sum = np.diagflat(self.activations * (1 - self.activations))
+        if self.activation_f == Activation.SIGMOID:
+            # Sigmoid gradients
+            J_z_sum = np.diagflat(self.activations * (1 - self.activations))
 
+        elif self.activation_f == Activation.RELU:
+            # Relu gradients
+            J_z_sum = np.diagflat((self.activations > 0) * 1)
+        
         # Jacobian from Z to Weights
         J_z_w = np.outer(self.inputs.T, J_z_sum.diagonal())
 

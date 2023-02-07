@@ -61,27 +61,33 @@ class NeuralNetwork:
         losses = []
         losses_show = []
 
-        # For each training example repeat this process:
-        for i in range(features.shape[0]):
+        # Shuffle data
+        p = np.random.permutation(len(features))
+        features = features[p]
+        targets = targets[p]
 
-            # Preprosess data
-            x = features[i].flatten().reshape(-1, 1)
-            y = targets[i].reshape(1,-1)
+        for epoch in range(2):
+            # For each training example repeat this process:
+            for i in range(features.shape[0]):
 
-            # Forward pass - output.shape is [batch size, num_classes]
-            output = self.forward_pass(x)
+                # Preprosess data
+                x = features[i].flatten().reshape(-1, 1)
+                y = targets[i].reshape(1,-1)
 
-            # Backward pass
-            self.backward_pass(output, y)
+                # Forward pass - output.shape is [batch size, num_classes]
+                output = self.forward_pass(x)
 
-            # Validation and Loss
-            loss = cross_entropy_loss(y, output)
-            losses.append(loss)
+                # Backward pass
+                self.backward_pass(output, y)
 
-            if len(losses) > 20:
-                losses_show.append(np.mean(losses[-20:]))
-            else:
-                losses_show.append(losses[-1])
+                # Validation and Loss
+                loss = cross_entropy_loss(y, output)
+                losses.append(loss)
+
+                if len(losses) > 20:
+                    losses_show.append(np.mean(losses[-20:]))
+                else:
+                    losses_show.append(losses[-1])
 
 
         plt.plot(range(len(losses_show)), losses_show)
