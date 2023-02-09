@@ -29,6 +29,9 @@ class NeuralNetwork:
     def set_layers(self, layers):
         self.layers = layers
         print("Number of hidden layers: ", len(self.layers) - 2)
+        for i in range(len(layers) - 1): 
+            print("Layer ", i, ": ")
+            print("Activation function: ", layers[i].activation_f)
 
 
     def forward_pass(self, x: np.ndarray) -> np.ndarray:   
@@ -56,17 +59,21 @@ class NeuralNetwork:
         
             
         
-    def train(self, features, targets):
+    def train(self, features, targets, features_val, targets_val):
 
         losses = []
         losses_show = []
+        val_losses = []
 
-        # Shuffle data
-        p = np.random.permutation(len(features))
-        features = features[p]
-        targets = targets[p]
+        for epoch in range(3):
 
-        for epoch in range(2):
+            print("Epoch ", epoch+1)
+
+            # Shuffle data
+            p = np.random.permutation(len(features))
+            features = features[p]
+            targets = targets[p]
+
             # For each training example repeat this process:
             for i in range(features.shape[0]):
 
@@ -80,7 +87,7 @@ class NeuralNetwork:
                 # Backward pass
                 self.backward_pass(output, y)
 
-                # Validation and Loss
+                # Training Loss
                 loss = cross_entropy_loss(y, output)
                 losses.append(loss)
 
@@ -89,9 +96,22 @@ class NeuralNetwork:
                 else:
                     losses_show.append(losses[-1])
 
+            # Validation
+            validation_loss = self.validation_step(features_val, targets_val)
+            print("Validation Loss: ", validation_loss)
+            val_losses.append(validation_loss)
+  
 
-        plt.plot(range(len(losses_show)), losses_show)
+        #subplot(r,c) provide the no. of rows and columns
+        f, axarr = plt.subplots(2,1) 
+
+        # use the created array to output your multiple images
+        axarr[0].plot(range(len(losses_show)), losses_show)
+        axarr[1].plot(range(len(val_losses)), val_losses)
+
         plt.show()
+
+
 
     def predict(self, x):
         x = x.flatten().reshape(-1, 1)
@@ -102,3 +122,17 @@ class NeuralNetwork:
         pred = np.zeros(pred.size)
         pred[max_index] = 1
         return pred
+    
+    def validation_step(self, features_val, targets_val):
+        losses = []
+        for i in range(features_val.shape[0]):
+            x = features_val[i].flatten().reshape(-1, 1)
+            y = targets_val[i].reshape(1, -1)
+
+            output = self.forward_pass(x)
+
+            losses.append(cross_entropy_loss(y, output))
+        
+        avg_loss = sum(losses) / len(losses)
+
+        return avg_loss

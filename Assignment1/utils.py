@@ -42,6 +42,9 @@ def get_doodler_data(count):
     labels = X_dood[2]
     return features, targets, labels
 
+def targets_between_0109(targets):
+    return np.where(targets == 1, 0.9, 0.1)
+
 
 def one_hot_encode(y: np.ndarray, n_classes: int):
     y_encoded = np.zeros((y.shape[0], n_classes))

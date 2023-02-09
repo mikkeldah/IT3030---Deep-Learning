@@ -23,6 +23,8 @@ class DenseLayer(Layer):
 
         self.sum = self.weights.T @ x + self.biases
 
+        self.activations = self.sum
+
         if self.activation_f == Activation.SIGMOID:
             self.activations = sigmoid(self.sum)
 
@@ -40,6 +42,9 @@ class DenseLayer(Layer):
         elif self.activation_f == Activation.RELU:
             # Relu gradients
             J_z_sum = np.diagflat((self.activations > 0) * 1)
+
+        else:
+            J_z_sum = np.diagflat(np.ones(self.activations.shape))
         
         # Jacobian from Z to Weights
         J_z_w = np.outer(self.inputs.T, J_z_sum.diagonal())
@@ -87,3 +92,4 @@ class SoftmaxLayer(Layer):
         J_acc = J_acc @ J_softmax_z
 
         return J_acc
+
