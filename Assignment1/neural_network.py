@@ -59,7 +59,7 @@ class NeuralNetwork:
         
             
         
-    def train(self, features, targets, features_val, targets_val):
+    def train(self, features, targets, features_val, targets_val, verbose=False):
 
         losses = []
         losses_show = []
@@ -81,6 +81,8 @@ class NeuralNetwork:
                 x = features[i].flatten().reshape(-1, 1)
                 y = targets[i].reshape(1,-1)
 
+                
+
                 # Forward pass - output.shape is [batch size, num_classes]
                 output = self.forward_pass(x)
 
@@ -91,23 +93,44 @@ class NeuralNetwork:
                 loss = cross_entropy_loss(y, output)
                 losses.append(loss)
 
+                if verbose: 
+                    print("Forward Pass: ")
+                    print("Input: ", features[i])
+                    print("Output: ", output)
+                    print("Target: ", y)
+                    print("Loss: ", loss)
+                    print("\n")
+
                 if len(losses) > 20:
                     losses_show.append(np.mean(losses[-20:]))
                 else:
                     losses_show.append(losses[-1])
+                
+                if (i % 50 == 0):
+                    # Validation
+                    validation_loss = self.validation_step(features_val, targets_val)
+                    val_losses.append(validation_loss)
+                    
 
             # Validation
             validation_loss = self.validation_step(features_val, targets_val)
-            print("Validation Loss: ", validation_loss)
-            val_losses.append(validation_loss)
+            print("Epoch Validation Loss: ", validation_loss)
   
 
-        #subplot(r,c) provide the no. of rows and columns
-        f, axarr = plt.subplots(2,1) 
+        # Visualize performance
+        plt.figure(figsize=(6, 4), dpi=150)
 
-        # use the created array to output your multiple images
-        axarr[0].plot(range(len(losses_show)), losses_show)
-        axarr[1].plot(range(len(val_losses)), val_losses)
+        plt.grid()
+        plt.xlabel("Training Steps")
+        plt.ylabel("Loss")
+
+        x_training = range(len(losses_show))
+        x_val = range(len(val_losses))
+
+        plt.plot(list(x_training), losses_show, label="Training Loss")
+        plt.plot([50 * x for x in x_val], val_losses, label="Validation Loss")
+
+        plt.legend(loc="upper right")
 
         plt.show()
 

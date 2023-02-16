@@ -4,10 +4,10 @@ cross_entropy
 0.0001
 l2
 LAYERS
-dense in:784 out:100 sigmoid
-dense in:100 out:50 sigmoid
-dense in:50 out:30 sigmoid
-dense in:30 out:20 sigmoid
-dense in:20 out:10 sigmoid
-dense in:10 out:4 
+dense in:784 out:200 sigmoid
+dense in:200 out:200 sigmoid
+dense in:200 out:150 sigmoid
+dense in:150 out:100 sigmoid
+dense in:100 out:64 sigmoid
+dense in:64 out:4 
 softmax

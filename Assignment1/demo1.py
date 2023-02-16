@@ -8,13 +8,13 @@ from utils import *
 nn = parse_file('Assignment1/configfiles/network1.txt')
 
 # Data
-features, targets, labels = get_doodler_data(count=5000)
+features, targets, labels = get_doodler_data(count=2000)
 
 X_train, y_train, X_test, y_test = train_test_split(features, targets, split=0.2)
 X_train, y_train , X_val, y_val = train_test_split(X_train, y_train, split=0.2)
 
 # Train Network on Data
-nn.train(X_train, y_train, X_val, y_val)
+nn.train(X_train, y_train, X_val, y_val, verbose=False)
 
 
 # Test
