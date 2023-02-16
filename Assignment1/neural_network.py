@@ -59,13 +59,13 @@ class NeuralNetwork:
         
             
         
-    def train(self, features, targets, features_val, targets_val, verbose=False):
+    def train(self, features, targets, features_val, targets_val, epochs,verbose=False):
 
         losses = []
         losses_show = []
         val_losses = []
 
-        for epoch in range(3):
+        for epoch in range(epochs):
 
             print("Epoch ", epoch+1)
 
