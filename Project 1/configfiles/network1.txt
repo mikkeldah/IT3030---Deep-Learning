@@ -1,0 +1,9 @@
+DEFAULTS
+cross_entropy
+0.1
+0.0001
+l1
+LAYERS
+dense in:784 out:64 relu
+dense in:64 out:32 relu
+dense in:32 out:4 sigmoid 

@@ -16,7 +16,6 @@ X_train, y_train , X_val, y_val = train_test_split(X_train, y_train, split=0.2)
 # Train Network on Data
 nn.train(X_train, y_train, X_val, y_val, epochs=3,verbose=False)
 
-
 # Test
 test_losses = []
 test_correct_preds = 0
