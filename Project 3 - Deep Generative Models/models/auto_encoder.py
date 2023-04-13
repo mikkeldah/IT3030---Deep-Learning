@@ -16,14 +16,12 @@ class AutoEncoder(nn.Module):
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1),
             nn.ReLU(),
-            nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1),
+            nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.ReLU(),
-            nn.ConvTranspose2d(32, in_channels, kernel_size=3, stride=2, padding=1),
+            nn.ConvTranspose2d(32, in_channels, kernel_size=3, stride=2, padding=1, output_padding=1),
         )
 
     def forward(self, x):
         x = self.encoder(x)
-        print(f"Encoder output shape: {x.shape}")
         x = self.decoder(x)
-        print(f"Decoder output shape: {x.shape}")
         return x
