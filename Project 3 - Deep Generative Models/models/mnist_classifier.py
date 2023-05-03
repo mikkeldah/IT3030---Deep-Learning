@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 class MNISTClassifier(nn.Module):
-    def __init__(self, image_depth=1):
+    def __init__(self, image_depth=1, n_classes=10):
         super(MNISTClassifier, self).__init__()
 
         self.feature_extractor = nn.Sequential(
@@ -20,7 +20,7 @@ class MNISTClassifier(nn.Module):
             nn.Flatten(),
             nn.Linear(7 * 7 * 64, 128),
             nn.ReLU(),
-            nn.Linear(128, 10),
+            nn.Linear(128, n_classes),
         )
 
     def forward(self, x):
